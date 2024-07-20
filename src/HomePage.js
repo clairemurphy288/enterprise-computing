@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import NavBar from './NavBar'; // Import the NavBar component
+import NavBar from './NavBar';
 
 const API_KEY = process.env.REACT_APP_API_KEY; // Replace with your YouTube Data API key
+
+const regionOptions = [
+  { code: 'US', name: 'United States' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'FR', name: 'France' },
+  // Add more region options as needed
+];
 
 const HomePage = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('US'); // Default to United States
 
   useEffect(() => {
     const fetchPopularVideos = async () => {
@@ -18,6 +28,7 @@ const HomePage = () => {
             chart: 'mostPopular',
             maxResults: 10,
             key: API_KEY,
+            regionCode: selectedRegion, // Filter by selected region
           },
         });
         setVideos(response.data.items);
@@ -29,12 +40,27 @@ const HomePage = () => {
     };
 
     fetchPopularVideos();
-  }, []);
+  }, [selectedRegion]); // Re-fetch videos when region changes
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <NavBar />
       <main className="flex-grow p-6">
+        <div className="mb-4">
+          <label htmlFor="region-select" className="mr-2 text-lg font-semibold text-gray-900">Select Region:</label>
+          <select
+            id="region-select"
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            className="bg-white border border-gray-300 rounded-md shadow-sm p-2"
+          >
+            {regionOptions.map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+        </div>
         {loading ? (
           <div className="text-gray-700">Loading...</div>
         ) : error ? (
@@ -66,4 +92,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
