@@ -51,7 +51,7 @@ const VideoPage = () => {
           return prevIndex;
         }
       });
-    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 1000); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex, isPlaying]);
@@ -87,6 +87,22 @@ const VideoPage = () => {
     return transcript.slice(index, endIndex).reduce((total, entry) => total + (entry.duration || 1), 0);
   };
 
+  const renderTextWithSpaces = (text) => {
+    // Render text while preserving spaces between words
+    return text.split(/(\s+)/).map((chunk, index) => (
+      chunk.trim() === ''
+        ? <span key={index}>&nbsp;</span> // Render spaces as non-breaking spaces
+        : <span
+            key={index}
+            className="inline-block cursor-pointer hover:bg-gray-200"
+            style={{ userSelect: 'text' }}
+            onClick={() => alert(`Selected: ${chunk}`)} // Example action
+          >
+            {chunk}
+          </span>
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
       <NavBar />
@@ -101,7 +117,9 @@ const VideoPage = () => {
           </div>
         </div>
         <div className="p-6 rounded-lg w-full max-w-4xl mt-6">
-          <p className="text-2xl font-semibold text-gray-800">{currentText || 'Loading...'}</p>
+          <p className="text-2xl font-semibold text-gray-800">
+            {renderTextWithSpaces(currentText) || 'Loading...'}
+          </p>
         </div>
       </main>
     </div>
@@ -109,6 +127,7 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
 
 
 
