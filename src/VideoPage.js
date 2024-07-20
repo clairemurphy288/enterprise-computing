@@ -11,7 +11,7 @@ const VideoPage = () => {
   const [currentText, setCurrentText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [player, setPlayer] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const VideoPage = () => {
           return prevIndex;
         }
       });
-    }, getDurationForNextIndex(currentIndex, transcript) * 1000); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex, isPlaying]);
