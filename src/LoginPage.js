@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from './firebase-config';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("Logged in successfully");
+      navigate('/home'); // Redirect to the home page on successful login
     } catch (err) {
       setError(err.message);
     }
@@ -71,5 +72,6 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 
 
