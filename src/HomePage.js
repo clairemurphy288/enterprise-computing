@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 
 const API_KEY = process.env.REACT_APP_API_KEY; // Replace with your YouTube Data API key
@@ -18,7 +19,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('US'); // Default to United States
-  const [selectedVideoId, setSelectedVideoId] = useState(null); // State for selected video
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPopularVideos = async () => {
@@ -43,6 +44,10 @@ const HomePage = () => {
     fetchPopularVideos();
   }, [selectedRegion]); // Re-fetch videos when region changes
 
+  const handleVideoSelect = (videoId) => {
+    navigate(`/video/${videoId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <NavBar />
@@ -62,22 +67,6 @@ const HomePage = () => {
             ))}
           </select>
         </div>
-        <div className="flex">
-          {/* Video Player */}
-          {selectedVideoId && (
-            <div className="flex-grow mb-6">
-              <iframe
-                width="100%"
-                height="480"
-                src={`https://www.youtube.com/embed/${selectedVideoId}`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )}
-        </div>
         {loading ? (
           <div className="text-gray-700">Loading...</div>
         ) : error ? (
@@ -88,7 +77,7 @@ const HomePage = () => {
               <div
                 key={video.id}
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                onClick={() => setSelectedVideoId(video.id)}
+                onClick={() => handleVideoSelect(video.id)}
               >
                 <img
                   className="w-full h-64 object-cover rounded-md mb-4"
@@ -106,6 +95,8 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
 
 
 
