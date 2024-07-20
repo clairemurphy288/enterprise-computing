@@ -10,6 +10,8 @@ const VideoPage = () => {
   const [error, setError] = useState('');
   const [currentText, setCurrentText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [player, setPlayer] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +39,8 @@ const VideoPage = () => {
     if (transcript.length === 0) return;
 
     const interval = setInterval(() => {
+      if (!isPlaying) return; // Skip updates if video is paused
+
       setCurrentIndex(prevIndex => {
         const nextIndex = prevIndex + 3; // Move by 3 entries
         if (nextIndex < transcript.length) {
@@ -50,7 +54,27 @@ const VideoPage = () => {
     }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
 
     return () => clearInterval(interval);
-  }, [transcript, currentIndex]);
+  }, [transcript, currentIndex, isPlaying]);
+
+  useEffect(() => {
+    if (window.YT) {
+      const onPlayerReady = (event) => {
+        setPlayer(event.target);
+        event.target.addEventListener('onStateChange', onPlayerStateChange);
+      };
+
+      const onPlayerStateChange = (event) => {
+        setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
+      };
+
+      new window.YT.Player(videoRef.current, {
+        videoId: id,
+        events: {
+          'onReady': onPlayerReady,
+        },
+      });
+    }
+  }, [id]);
 
   const getCombinedText = (startIndex, transcript) => {
     // Combine text from three consecutive entries
@@ -67,20 +91,16 @@ const VideoPage = () => {
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
       <NavBar />
       <main className="flex-grow flex flex-col items-center justify-center p-6">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-4/5 max-w-4xl">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
           <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
-            <iframe
+            <div
               ref={videoRef}
-              src={`https://www.youtube.com/embed/${id}?enablejsapi=1`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            ></iframe>
+              className="absolute top-0 left-0 w-full h-full"
+              style={{ position: 'absolute', top: 0, left: 0 }}
+            />
           </div>
         </div>
-        <div className="p-6 rounded-lg w-4/5 max-w-4xl mt-6">
+        <div className="p-6 rounded-lg w-full max-w-4xl mt-6">
           <p className="text-2xl font-semibold text-gray-800">{currentText || 'Loading...'}</p>
         </div>
       </main>
@@ -89,6 +109,8 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
+
 
 
 
