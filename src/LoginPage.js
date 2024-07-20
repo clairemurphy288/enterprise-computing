@@ -2,20 +2,33 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from './firebase-config';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/home'); // Redirect to the home page on successful login
+      navigate('/home');
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handleGoogleLogin = async (response) => {
+    try {
+      // Use the ID token to sign in with your backend or directly with Firebase
+      const idToken = response.credential;
+      // For example, you can pass this token to your backend for verification
+      console.log('Google ID Token:', idToken);
+      navigate('/home');
+    } catch (err) {
+      setError('Google authentication failed');
     }
   };
 
@@ -63,6 +76,16 @@ const LoginPage = () => {
             </Link>
           </div>
         </form>
+        <div className="mt-4">
+          <GoogleLogin
+            onSuccess={credentialResponse => {
+              navigate('/home')
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        </div>
         <p className="mt-4 text-center text-gray-600">
           Don't have an account? <Link to="/signup" className="text-blue-500 hover:text-blue-800">Create Account</Link>
         </p>
