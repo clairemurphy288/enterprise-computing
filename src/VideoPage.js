@@ -22,7 +22,7 @@ const VideoPage = () => {
         }));
         setTranscript(decodedTranscript);
         if (decodedTranscript.length > 0) {
-          setCurrentText(decodedTranscript[0].text);
+          setCurrentText(getCombinedText(0, decodedTranscript));
         }
       } catch (err) {
         setError('Failed to fetch transcript');
@@ -38,19 +38,30 @@ const VideoPage = () => {
 
     const interval = setInterval(() => {
       setCurrentIndex(prevIndex => {
-        const nextIndex = prevIndex + 1;
+        const nextIndex = prevIndex + 3; // Move by 3 entries
         if (nextIndex < transcript.length) {
-          setCurrentText(transcript[nextIndex].text);
+          setCurrentText(getCombinedText(nextIndex, transcript));
           return nextIndex;
         } else {
           clearInterval(interval);
           return prevIndex;
         }
       });
-    }, transcript[currentIndex]?.duration * 1000); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex]);
+
+  const getCombinedText = (startIndex, transcript) => {
+    // Combine text from three consecutive entries
+    return transcript.slice(startIndex, startIndex + 3).map(entry => entry.text).join(' ');
+  };
+
+  const getDurationForNextIndex = (index, transcript) => {
+    // Combine duration for three consecutive entries
+    const endIndex = Math.min(index + 3, transcript.length); // Avoid out-of-bounds
+    return transcript.slice(index, endIndex).reduce((total, entry) => total + (entry.duration || 1), 0);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -78,5 +89,7 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
+
 
 
