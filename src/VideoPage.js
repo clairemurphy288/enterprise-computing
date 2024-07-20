@@ -66,24 +66,22 @@ const VideoPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
       <NavBar />
-      <main className="flex-grow flex items-center justify-center p-6">
+      <main className="flex-grow flex flex-col items-center justify-center p-6">
         <div className="bg-white p-6 rounded-lg shadow-lg w-4/5 max-w-4xl">
-          <div className="flex justify-center mb-6">
-            <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
-              <iframe
-                ref={videoRef}
-                src={`https://www.youtube.com/embed/${id}?enablejsapi=1`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-              ></iframe>
-            </div>
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
+            <iframe
+              ref={videoRef}
+              src={`https://www.youtube.com/embed/${id}?enablejsapi=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            ></iframe>
           </div>
-          <div className="flex flex-col items-center">
-            <p className="text-lg text-gray-700">{currentText || 'Loading...'}</p>
-          </div>
+        </div>
+        <div className="p-6 rounded-lg w-4/5 max-w-4xl mt-6">
+          <p className="text-2xl font-semibold text-gray-800">{currentText || 'Loading...'}</p>
         </div>
       </main>
     </div>
@@ -91,6 +89,7 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
 
 
 
