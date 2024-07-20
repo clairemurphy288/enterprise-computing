@@ -12,7 +12,6 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect or show a success message
       console.log("Logged in successfully");
     } catch (err) {
       setError(err.message);
@@ -58,9 +57,9 @@ const LoginPage = () => {
             >
               Sign In
             </button>
-            <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
+            <Link to="/reset-password" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
               Forgot Password?
-            </a>
+            </Link>
           </div>
         </form>
         <p className="mt-4 text-center text-gray-600">
