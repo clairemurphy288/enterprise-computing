@@ -18,6 +18,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('US'); // Default to United States
+  const [selectedVideoId, setSelectedVideoId] = useState(null); // State for selected video
 
   useEffect(() => {
     const fetchPopularVideos = async () => {
@@ -61,6 +62,22 @@ const HomePage = () => {
             ))}
           </select>
         </div>
+        <div className="flex">
+          {/* Video Player */}
+          {selectedVideoId && (
+            <div className="flex-grow mb-6">
+              <iframe
+                width="100%"
+                height="480"
+                src={`https://www.youtube.com/embed/${selectedVideoId}`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )}
+        </div>
         {loading ? (
           <div className="text-gray-700">Loading...</div>
         ) : error ? (
@@ -68,20 +85,17 @@ const HomePage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {videos.map((video) => (
-              <div key={video.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <a
-                  href={`https://www.youtube.com/watch?v=${video.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <img
-                    className="w-full h-64 object-cover rounded-md mb-4"
-                    src={video.snippet.thumbnails.high.url} // Use 'high' resolution
-                    alt={video.snippet.title}
-                  />
-                  <h2 className="text-xl font-semibold text-gray-900">{video.snippet.title}</h2>
-                </a>
+              <div
+                key={video.id}
+                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                onClick={() => setSelectedVideoId(video.id)}
+              >
+                <img
+                  className="w-full h-64 object-cover rounded-md mb-4"
+                  src={video.snippet.thumbnails.high.url} // Use 'high' resolution
+                  alt={video.snippet.title}
+                />
+                <h2 className="text-xl font-semibold text-gray-900">{video.snippet.title}</h2>
               </div>
             ))}
           </div>
@@ -92,5 +106,6 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
 
