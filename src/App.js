@@ -5,9 +5,8 @@ import SignUpPage from './SignUpPage';
 import PasswordResetPage from './PasswordResetPage';
 import HomePage from './HomePage';
 import VideoPage from './VideoPage';
-import FlashcardDecks from './FlashcardDecks'; // Correct path if needed
+import FlashcardDecksPage from './FlashcardDecks';
 import PracticePage from './PracticePage';
-import CompletionPage from './CompletionPage'; // Import the new page component
 import PrivateRoute from './PrivateRoute';
 
 function App() {
@@ -19,16 +18,14 @@ function App() {
         <Route path="/reset-password" element={<PasswordResetPage />} />
         <Route path="/home" element={<PrivateRoute element={<HomePage />} />} />
         <Route path="/video/:id" element={<PrivateRoute element={<VideoPage />} />} />
-        <Route path="/flashcard-decks" element={<PrivateRoute element={<FlashcardDecks />} />} />
+        <Route path="/flashcard-decks" element={<PrivateRoute element={<FlashcardDecksPage />} />} />
         <Route path="/practice/:deckId" element={<PrivateRoute element={<PracticePage />} />} />
-        <Route path="/completion/:deckId" element={<PrivateRoute element={<CompletionPage />} />} /> {/* Add route for Completion Page */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
 
 
 
