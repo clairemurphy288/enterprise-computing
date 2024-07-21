@@ -106,7 +106,8 @@ const VideoPage = () => {
   const createFlashcard = async (text) => {
     try {
       const response = await axios.post('http://localhost:4000/create-flashcard', { text });
-      console.log(JSON.parse(response.data.response.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim()));
+      const jsonResponse = JSON.parse(response.data.response.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim());
+      console.log(jsonResponse);
     } catch (error) {
       console.error('Error creating flashcard:', error);
     }
