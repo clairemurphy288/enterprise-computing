@@ -4,6 +4,21 @@ import axios from 'axios';
 import he from 'he';
 import NavBar from './NavBar';
 
+const Flashcard = ({ flashcard, onAddToDeck }) => (
+  <div className="bg-white p-4 border border-gray-300 shadow-lg rounded-lg w-80"> {/* Rounded corners */}
+    <h3 className="font-semibold text-xl mb-2">Flashcard</h3>
+    <p className="mb-1"><strong>Front:</strong> {flashcard.front}</p>
+    <p className="mb-1"><strong>Back:</strong> {flashcard.back}</p>
+    <p className="mb-2"><strong>Example:</strong> {flashcard.example}</p>
+    <button 
+      className="mt-2 p-2 bg-blue-500 text-white rounded-lg"
+      onClick={() => onAddToDeck(flashcard)}
+    >
+      Add to Deck
+    </button>
+  </div>
+);
+
 const VideoPage = () => {
   const { id } = useParams();
   const [transcript, setTranscript] = useState([]);
@@ -12,6 +27,8 @@ const VideoPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [player, setPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [flashcard, setFlashcard] = useState(null); // State for the flashcard
+  const [deck, setDeck] = useState([]); // State for the flashcard deck
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -107,16 +124,21 @@ const VideoPage = () => {
     try {
       const response = await axios.post('http://localhost:4000/create-flashcard', { text });
       const jsonResponse = JSON.parse(response.data.response.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim());
-      console.log(jsonResponse);
+      setFlashcard(jsonResponse);
     } catch (error) {
       console.error('Error creating flashcard:', error);
     }
   };
 
+  const handleAddToDeck = (flashcard) => {
+    setDeck([...deck, flashcard]);
+    setFlashcard(null); // Hide the flashcard after adding to deck
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
       <NavBar />
-      <main className="flex-grow flex flex-col items-center justify-center p-6">
+      <main className="flex-grow flex items-center justify-center p-6"> {/* Center main content */}
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
           <div className="relative w-full" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
             <div
@@ -125,18 +147,26 @@ const VideoPage = () => {
               style={{ position: 'absolute', top: 0, left: 0 }}
             />
           </div>
+          <div className="p-4 text-center"> {/* Centered caption below the video */}
+            <p className="text-2xl font-semibold text-gray-800">
+              {renderTextWithSpaces(currentText) || 'Loading...'}
+            </p>
+          </div>
         </div>
-        <div className="p-6 rounded-lg w-full max-w-4xl mt-6">
-          <p className="text-2xl font-semibold text-gray-800">
-            {renderTextWithSpaces(currentText) || 'Loading...'}
-          </p>
-        </div>
+        {flashcard && (
+          <div className="ml-6"> {/* Margin to the left */}
+            <Flashcard flashcard={flashcard} onAddToDeck={handleAddToDeck} />
+          </div>
+        )}
       </main>
     </div>
   );
 };
 
 export default VideoPage;
+
+
+
 
 
 
