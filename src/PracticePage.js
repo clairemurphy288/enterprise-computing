@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { useParams, useNavigate } from 'react-router-dom';
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from './firebase-config';
 import NavBar from './NavBar';
 import FlashCard from './FlashCard';
@@ -9,6 +9,8 @@ const PracticePage = () => {
   const { deckId } = useParams();
   const [deck, setDeck] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDeck = async () => {
@@ -29,12 +31,42 @@ const PracticePage = () => {
   }, [deckId]);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % deck.flashcards.length);
+    if (currentIndex === deck.flashcards.length - 1) {
+      handleCompletion();
+    } else {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    }
   };
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + deck.flashcards.length) % deck.flashcards.length);
   };
+
+  const handleCompletion = async () => {
+    setCompleted(true);
+    try {
+      // Update user's score in the database
+      // Assuming you have a user ID available, replace `userId` with the actual ID
+      const userId = 'USER_ID'; // Replace with the actual user ID
+      const userRef = doc(db, 'users', userId);
+
+      await updateDoc(userRef, {
+        score: increment(1) // Increment score by 1
+      });
+
+      console.log('Score updated successfully');
+    } catch (error) {
+      console.error('Error updating score:', error);
+    }
+
+    // Redirect to the completion page
+    navigate(`/completion/${deckId}`);
+  };
+
+  if (completed) {
+    // Optional: Render nothing here as the user will be redirected to the completion page
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
@@ -70,5 +102,6 @@ const PracticePage = () => {
 };
 
 export default PracticePage;
+
 
 
