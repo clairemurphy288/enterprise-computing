@@ -11,7 +11,22 @@ const regionOptions = [
   { code: 'CA', name: 'Canada' },
   { code: 'AU', name: 'Australia' },
   { code: 'FR', name: 'France' },
-  // Add more region options as needed
+  { code: 'DE', name: 'Germany' },
+  { code: 'IT', name: 'Italy' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'MX', name: 'Mexico' },
+  { code: 'JP', name: 'Japan' },
+  { code: 'KR', name: 'South Korea' },
+  { code: 'IN', name: 'India' },
+  { code: 'BR', name: 'Brazil' },
+  { code: 'ZA', name: 'South Africa' },
+  { code: 'RU', name: 'Russia' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'CO', name: 'Colombia' },
+  { code: 'CL', name: 'Chile' },
+  { code: 'PH', name: 'Philippines' },
+  { code: 'SG', name: 'Singapore' },
+  // Add more regions as needed
 ];
 
 const HomePage = () => {
@@ -19,10 +34,13 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('US'); // Default to United States
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
+  const [searchTerm, setSearchTerm] = useState(''); // Search term state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPopularVideos = async () => {
+      setLoading(true);
       try {
         const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
           params: {
@@ -42,10 +60,40 @@ const HomePage = () => {
     };
 
     fetchPopularVideos();
-  }, [selectedRegion]); // Re-fetch videos when region changes
+  }, [selectedRegion]); // Re-fetch popular videos when region changes
+
+  useEffect(() => {
+    if (searchTerm) {
+      const fetchSearchResults = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+              part: 'snippet',
+              maxResults: 10,
+              key: API_KEY,
+              q: searchTerm, // Add search query
+              type: 'video', // Only fetch videos
+            },
+          });
+          setVideos(response.data.items);
+          setLoading(false);
+        } catch (err) {
+          setError('Failed to fetch videos');
+          setLoading(false);
+        }
+      };
+
+      fetchSearchResults();
+    }
+  }, [searchTerm]); // Re-fetch search results when searchTerm changes
 
   const handleVideoSelect = (videoId) => {
     navigate(`/video/${videoId}`);
+  };
+
+  const handleSearch = () => {
+    setSearchTerm(searchQuery.trim()); // Set search term to trigger search
   };
 
   return (
@@ -67,6 +115,21 @@ const HomePage = () => {
             ))}
           </select>
         </div>
+        <div className="mb-4 flex items-center">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search videos..."
+            className="bg-white border border-gray-300 rounded-md shadow-sm p-2 mr-2 flex-grow"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 text-white rounded-md p-2"
+          >
+            Search
+          </button>
+        </div>
         {loading ? (
           <div className="text-gray-700">Loading...</div>
         ) : error ? (
@@ -75,9 +138,9 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {videos.map((video) => (
               <div
-                key={video.id}
+                key={video.id.videoId}
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                onClick={() => handleVideoSelect(video.id)}
+                onClick={() => handleVideoSelect(video.id.videoId)}
               >
                 <img
                   className="w-full h-64 object-cover rounded-md mb-4"
@@ -95,6 +158,7 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
 
 
