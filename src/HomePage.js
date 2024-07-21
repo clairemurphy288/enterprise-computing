@@ -89,6 +89,7 @@ const HomePage = () => {
   }, [searchTerm]); // Re-fetch search results when searchTerm changes
 
   const handleVideoSelect = (videoId) => {
+    // console.log(videoId)
     navigate(`/video/${videoId}`);
   };
 
@@ -140,7 +141,7 @@ const HomePage = () => {
               <div
                 key={video.id.videoId}
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                onClick={() => handleVideoSelect(video.id.videoId)}
+                onClick={() => handleVideoSelect(video.id)}
               >
                 <img
                   className="w-full h-64 object-cover rounded-md mb-4"
