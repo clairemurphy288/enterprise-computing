@@ -51,7 +51,7 @@ const VideoPage = () => {
           return prevIndex;
         }
       });
-    }, getDurationForNextIndex(currentIndex, transcript) * 1000); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex, isPlaying]);
