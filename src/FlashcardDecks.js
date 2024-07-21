@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import NavBar from './NavBar'; // Import NavBar component
-import { db } from './firebase-config'; // Adjust the path as needed
+import { useNavigate } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
+import { db } from './firebase-config';
+import NavBar from './NavBar';
 
-const FlashcardDecksPage = () => {
+const FlashcardDecks = () => {
   const [decks, setDecks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -25,6 +27,10 @@ const FlashcardDecksPage = () => {
 
     fetchDecks();
   }, []);
+
+  const handleDeckClick = (deckId) => {
+    navigate(`/practice/${deckId}`);
+  };
 
   if (loading) {
     return (
@@ -54,7 +60,7 @@ const FlashcardDecksPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
-      <NavBar /> {/* Include NavBar here */}
+      <NavBar />
       <main className="flex-grow flex items-center justify-center p-6">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl text-center">
           <h1 className="text-4xl font-bold mb-4">Your Flashcard Decks</h1>
@@ -63,8 +69,13 @@ const FlashcardDecksPage = () => {
             <ul className="space-y-4">
               {decks.map(deck => (
                 <li key={deck.id} className="bg-blue-100 p-4 rounded-lg border border-gray-300 shadow-md">
-                  <h2 className="text-2xl font-semibold mb-2">{deck.title}</h2>
-                  <p className="text-lg">Number of flashcards: {deck.flashcards.length}</p>
+                  <button
+                    className="text-2xl font-semibold mb-2 w-full text-center" // Center the button text
+                    onClick={() => handleDeckClick(deck.id)}
+                  >
+                    {deck.title}
+                  </button>
+                  <p className="text-lg text-center">Number of flashcards: {deck.flashcards.length}</p>
                 </li>
               ))}
             </ul>
@@ -77,5 +88,7 @@ const FlashcardDecksPage = () => {
   );
 };
 
-export default FlashcardDecksPage;
+export default FlashcardDecks;
+
+
 
