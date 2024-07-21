@@ -51,7 +51,7 @@ const VideoPage = () => {
           return prevIndex;
         }
       });
-    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 1000); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex, isPlaying]);
@@ -96,11 +96,20 @@ const VideoPage = () => {
             key={index}
             className="inline-block cursor-pointer hover:bg-gray-200"
             style={{ userSelect: 'text' }}
-            onClick={() => alert(`Selected: ${chunk}`)} // Example action
+            onClick={() => createFlashcard(chunk)} // Call function to create flashcard
           >
             {chunk}
           </span>
     ));
+  };
+
+  const createFlashcard = async (text) => {
+    try {
+      const response = await axios.post('http://localhost:4000/create-flashcard', { text });
+      console.log('Flashcard created:', response.data.response.candidates[0].content.parts[0].text);
+    } catch (error) {
+      console.error('Error creating flashcard:', error);
+    }
   };
 
   return (
@@ -127,6 +136,7 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
 
 
 
