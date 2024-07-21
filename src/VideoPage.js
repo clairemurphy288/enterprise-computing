@@ -3,21 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import he from 'he';
 import NavBar from './NavBar';
+import FlashCard from './FlashCard'
 
-const Flashcard = ({ flashcard, onAddToDeck }) => (
-  <div className="bg-white p-4 border border-gray-300 shadow-lg rounded-lg w-80"> {/* Rounded corners */}
-    <h3 className="font-semibold text-xl mb-2">Flashcard</h3>
-    <p className="mb-1"><strong>Front:</strong> {flashcard.front}</p>
-    <p className="mb-1"><strong>Back:</strong> {flashcard.back}</p>
-    <p className="mb-2"><strong>Example:</strong> {flashcard.example}</p>
-    <button 
-      className="mt-2 p-2 bg-blue-500 text-white rounded-lg"
-      onClick={() => onAddToDeck(flashcard)}
-    >
-      Add to Deck
-    </button>
-  </div>
-);
 
 const VideoPage = () => {
   const { id } = useParams();
@@ -155,7 +142,7 @@ const VideoPage = () => {
         </div>
         {flashcard && (
           <div className="ml-6"> {/* Margin to the left */}
-            <Flashcard flashcard={flashcard} onAddToDeck={handleAddToDeck} />
+            <FlashCard flashcard={flashcard} onAddToDeck={handleAddToDeck} />
           </div>
         )}
       </main>
