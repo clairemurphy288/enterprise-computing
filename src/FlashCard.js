@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { db } from './firebase-config'; // Adjust path as needed
-import { collection, doc, getDoc, setDoc, updateDoc, runTransaction } from 'firebase/firestore';
+import { collection, doc, runTransaction } from 'firebase/firestore';
 
-const Flashcard = ({ flashcard, onAddToDeck }) => {
+const Flashcard = ({ flashcard, videoTitle, onAddToDeck }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -11,7 +11,6 @@ const Flashcard = ({ flashcard, onAddToDeck }) => {
 
   const handleAddToDeck = async (flashcard) => {
     try {
-      const videoTitle = "Example Video Title"; // Replace with actual video title or logic to get it
       const deckRef = doc(collection(db, 'decks'), videoTitle);
 
       await runTransaction(db, async (transaction) => {
@@ -33,6 +32,7 @@ const Flashcard = ({ flashcard, onAddToDeck }) => {
       });
 
       console.log('Flashcard added to deck successfully');
+      onAddToDeck(flashcard); // Call the parent component's function to update the deck state
     } catch (error) {
       console.error('Error adding flashcard to deck:', error);
     }
@@ -69,6 +69,4 @@ const Flashcard = ({ flashcard, onAddToDeck }) => {
 };
 
 export default Flashcard;
-
-
 

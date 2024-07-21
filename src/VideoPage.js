@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import he from 'he';
 import NavBar from './NavBar';
-import FlashCard from './FlashCard'
-
+import FlashCard from './FlashCard';
+import { db } from './firebase-config'; // Adjust path as needed
+import { collection, doc, runTransaction } from 'firebase/firestore';
 
 const VideoPage = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const VideoPage = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [flashcard, setFlashcard] = useState(null); // State for the flashcard
   const [deck, setDeck] = useState([]); // State for the flashcard deck
+  const [videoTitle, setVideoTitle] = useState(''); // State for the video title
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ const VideoPage = () => {
     };
 
     fetchTranscript();
+    fetchVideoTitle(); // Fetch the video title
   }, [id]);
 
   useEffect(() => {
@@ -80,6 +83,17 @@ const VideoPage = () => {
     }
   }, [id]);
 
+  const fetchVideoTitle = async () => {
+    try {
+      const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${process.env.REACT_APP_API_KEY}&part=snippet`);
+      if (response.data.items.length > 0) {
+        setVideoTitle(response.data.items[0].snippet.title);
+      }
+    } catch (error) {
+      console.error('Error fetching video title:', error);
+    }
+  };
+
   const getCombinedText = (startIndex, transcript) => {
     // Combine text from three consecutive entries
     return transcript.slice(startIndex, startIndex + 3).map(entry => entry.text).join(' ');
@@ -117,9 +131,34 @@ const VideoPage = () => {
     }
   };
 
-  const handleAddToDeck = (flashcard) => {
-    setDeck([...deck, flashcard]);
-    setFlashcard(null); // Hide the flashcard after adding to deck
+  const handleAddToDeck = async (flashcard) => {
+    try {
+      const deckRef = doc(collection(db, 'decks'), videoTitle);
+
+      await runTransaction(db, async (transaction) => {
+        const docSnap = await transaction.get(deckRef);
+
+        if (!docSnap.exists()) {
+          // Create a new deck if it doesn't exist
+          transaction.set(deckRef, {
+            title: videoTitle,
+            flashcards: [flashcard],
+          });
+        } else {
+          // Update existing deck
+          const existingDeck = docSnap.data();
+          transaction.update(deckRef, {
+            flashcards: [...existingDeck.flashcards, flashcard],
+          });
+        }
+      });
+
+      console.log('Flashcard added to deck successfully');
+      setDeck([...deck, flashcard]);
+      setFlashcard(null); // Hide the flashcard after adding to deck
+    } catch (error) {
+      console.error('Error adding flashcard to deck:', error);
+    }
   };
 
   return (
@@ -142,7 +181,7 @@ const VideoPage = () => {
         </div>
         {flashcard && (
           <div className="ml-6"> {/* Margin to the left */}
-            <FlashCard flashcard={flashcard} onAddToDeck={handleAddToDeck} />
+            <FlashCard flashcard={flashcard} videoTitle={videoTitle} onAddToDeck={handleAddToDeck} />
           </div>
         )}
       </main>
@@ -151,6 +190,7 @@ const VideoPage = () => {
 };
 
 export default VideoPage;
+
 
 
 
