@@ -131,35 +131,6 @@ const VideoPage = () => {
     }
   };
 
-  const handleAddToDeck = async (flashcard) => {
-    try {
-      const deckRef = doc(collection(db, 'decks'), videoTitle);
-
-      await runTransaction(db, async (transaction) => {
-        const docSnap = await transaction.get(deckRef);
-
-        if (!docSnap.exists()) {
-          // Create a new deck if it doesn't exist
-          transaction.set(deckRef, {
-            title: videoTitle,
-            flashcards: [flashcard],
-          });
-        } else {
-          // Update existing deck
-          const existingDeck = docSnap.data();
-          transaction.update(deckRef, {
-            flashcards: [...existingDeck.flashcards, flashcard],
-          });
-        }
-      });
-
-      console.log('Flashcard added to deck successfully');
-      setDeck([...deck, flashcard]);
-      setFlashcard(null); // Hide the flashcard after adding to deck
-    } catch (error) {
-      console.error('Error adding flashcard to deck:', error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 flex flex-col">
@@ -181,7 +152,7 @@ const VideoPage = () => {
         </div>
         {flashcard && (
           <div className="ml-6"> {/* Margin to the left */}
-            <FlashCard flashcard={flashcard} videoTitle={videoTitle} onAddToDeck={handleAddToDeck} />
+            <FlashCard flashcard={flashcard} videoTitle={videoTitle} />
           </div>
         )}
       </main>

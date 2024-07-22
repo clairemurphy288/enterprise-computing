@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { db } from './firebase-config'; // Adjust path as needed
 import { collection, doc, runTransaction } from 'firebase/firestore';
 
-const Flashcard = ({ flashcard, videoTitle, onAddToDeck }) => {
+const Flashcard = ({ flashcard, videoTitle }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -32,7 +32,6 @@ const Flashcard = ({ flashcard, videoTitle, onAddToDeck }) => {
       });
 
       console.log('Flashcard added to deck successfully');
-      onAddToDeck(flashcard); // Call the parent component's function to update the deck state
     } catch (error) {
       console.error('Error adding flashcard to deck:', error);
     }
