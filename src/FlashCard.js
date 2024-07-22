@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { db } from './firebase-config'; // Adjust path as needed
 import { collection, doc, runTransaction } from 'firebase/firestore';
 
-const Flashcard = ({ flashcard, videoTitle }) => {
+const Flashcard = ({ flashcard, setFlashcard,  videoTitle }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
@@ -57,6 +57,7 @@ const Flashcard = ({ flashcard, videoTitle }) => {
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the flip on button click
               handleAddToDeck(flashcard); // Call Firebase function
+              setFlashcard(null)
             }}
           >
             Add to Deck

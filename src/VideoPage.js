@@ -152,7 +152,7 @@ const VideoPage = () => {
         </div>
         {flashcard && (
           <div className="ml-6"> {/* Margin to the left */}
-            <FlashCard flashcard={flashcard} videoTitle={videoTitle} />
+            <FlashCard setFlashcard={setFlashcard} flashcard={flashcard} videoTitle={videoTitle} />
           </div>
         )}
       </main>
