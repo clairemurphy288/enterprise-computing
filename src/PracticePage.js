@@ -94,7 +94,7 @@ const PracticePage = () => {
           <h1 className="text-4xl font-bold mb-4">{deck?.title}</h1>
           {deck ? (
             <div className="flex flex-col items-center justify-center">
-              <FlashCard flashcard={deck.flashcards[currentIndex]} />
+              <FlashCard flashcard={deck.flashcards[currentIndex]} isPracticeMode={true}/>
               <div className="mt-4 flex justify-center space-x-4">
                 <button
                   className="p-2 bg-blue-600 text-white rounded-lg"
