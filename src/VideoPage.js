@@ -58,7 +58,7 @@ const VideoPage = () => {
           return prevIndex;
         }
       });
-    }, getDurationForNextIndex(currentIndex, transcript) * 500); // Duration in milliseconds
+    }, getDurationForNextIndex(currentIndex, transcript) * 450); // Duration in milliseconds
 
     return () => clearInterval(interval);
   }, [transcript, currentIndex, isPlaying]);
@@ -123,7 +123,7 @@ const VideoPage = () => {
 
   const createFlashcard = async (text) => {
     try {
-      const response = await axios.post('http://localhost:4000/create-flashcard', { text });
+      const response = await axios.post('http://localhost:4000/create-flashcard', { text, currentText });
       const jsonResponse = JSON.parse(response.data.response.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim());
       setFlashcard(jsonResponse);
     } catch (error) {
