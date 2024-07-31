@@ -5,13 +5,14 @@
 /.pnp
 .pnp.js
 .env
+
 /youtube-transcript-server/node_modules
 # testing
 /coverage
 
 # production
 /build
-.env
+.env:10
 
 # misc
 .DS_Store
